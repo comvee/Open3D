@@ -126,11 +126,9 @@ def find_right_left_index(ls, target):
 
 def get_ordered_unqiue(ls, ignore=-1):
     out = []
-    prev = None
     for curr in ls:
-        if curr != prev and curr != ignore:
+        if curr != ignore and curr not in out:
             out += [curr]
-        prev = curr
     return out
 
 
@@ -272,8 +270,8 @@ def main():
     # Cluster and filter the trajectory
     print("Cluster and filter the trajectory...")
     labels = cluster_trajectory(Cs, n_clusters=5, n_init=12)
+    # visualize_cluster(Cs, labels, pcd, centroids=None)
     Cs_filtered, labels_filtered = cluster_filtering(Cs, labels, discard_num=3)
-    # visualize_cluster(Cs_filtered, labels_filtered, pcd, centroids=None)
     Cs_filtered_only = []
     labels_filtered_only = []
     for C, label in zip(Cs_filtered, labels_filtered):
@@ -295,6 +293,12 @@ def main():
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         score, blurry = detect_blur_fft(gray, size=30, thresh=20)
         label2data[label] += [[img_path, score]]
+    
+    if len(label2data) != 5:
+        print("Error: 5개 미만 또는 5개 초과의 시점이 식별되어 재촬영이 필요합니다."
+              "영상 촬영시 5개의 시점(1초간 정지)만 포함해야 합니다.")
+        visualize_cluster(Cs_filtered, labels_filtered, pcd, centroids=None)
+        exit()
 
     for label in label2data:
         target_dir_path = os.path.join(img_view_dir_path, f"view_{label}")
@@ -306,8 +310,7 @@ def main():
             shutil.copy2(img_path, target_dir_path)
     
     print("Finish.")
-    visualize_point(Cs, pcd, volume_len=0, colors=None)
-
+    visualize_cluster(Cs_filtered, labels_filtered, pcd, centroids=None)
 
 if __name__ == "__main__":
     main()
