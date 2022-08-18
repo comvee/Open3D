@@ -271,7 +271,7 @@ def main():
     print("Cluster and filter the trajectory...")
     labels = cluster_trajectory(Cs, n_clusters=5, n_init=12)
     # visualize_cluster(Cs, labels, pcd, centroids=None)
-    Cs_filtered, labels_filtered = cluster_filtering(Cs, labels, discard_num=3)
+    Cs_filtered, labels_filtered = cluster_filtering(Cs, labels, discard_num=1)
     Cs_filtered_only = []
     labels_filtered_only = []
     for C, label in zip(Cs_filtered, labels_filtered):
