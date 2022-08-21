@@ -271,7 +271,7 @@ def main():
     print("Cluster and filter the trajectory...")
     labels = cluster_trajectory(Cs, n_clusters=5, n_init=12)
     # visualize_cluster(Cs, labels, pcd, centroids=None)
-    Cs_filtered, labels_filtered = cluster_filtering(Cs, labels, discard_num=1)
+    Cs_filtered, labels_filtered = cluster_filtering(Cs, labels, discard_num=0)
     Cs_filtered_only = []
     labels_filtered_only = []
     for C, label in zip(Cs_filtered, labels_filtered):
@@ -303,9 +303,11 @@ def main():
     for label in label2data:
         target_dir_path = os.path.join(img_view_dir_path, f"view_{label}")
         os.makedirs(target_dir_path)
-        discard_num = int(len(label2data[label])*0.3)
-        data_discarded = sorted(label2data[label], reverse=True, key=lambda x: x[1])[:-discard_num]
-        for i, data in enumerate(data_discarded):
+        # discard_num = int(len(label2data[label])*0.3)
+        # if discard_num == 0: 
+        #     discard_num = None
+        # data_discarded = sorted(label2data[label], reverse=True, key=lambda x: x[1])[:-discard_num]
+        for i, data in enumerate(label2data[label]):
             img_path, score = data
             shutil.copy2(img_path, target_dir_path)
     
