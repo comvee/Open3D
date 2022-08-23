@@ -218,6 +218,10 @@ def main():
     img_selected_dir_path = os.path.join(base_path, "selected")
     fragments_dir_path = os.path.join(base_path, "fragments")
 
+    if not os.path.exists(pcd_path):
+        print(f"ERROR: cannout find the point cloud file at {pcd_path}")
+        exit()
+    
     if os.path.exists(img_view_dir_path):
         shutil.rmtree(img_view_dir_path)
     if os.path.exists(img_selected_dir_path):
@@ -229,9 +233,6 @@ def main():
 
     # Load point cloud
     print("Load the files...")
-    if not os.path.exists(pcd_path):
-        print(f"ERROR: cannout find the point cloud file at {pcd_path}")
-        exit()
     pcd = o3d.io.read_point_cloud(pcd_path)
 
     # Load intrinsic matrix
@@ -295,8 +296,9 @@ def main():
         label2data[label] += [[img_path, score]]
     
     if len(label2data) != 5:
-        print("Error: 5개 미만 또는 5개 초과의 시점이 식별되어 재촬영이 필요합니다."
-              "영상 촬영시 5개의 시점(1초간 정지)만 포함해야 합니다.")
+        print("Error: 5개 미만 또는 5개 초과의 시점이 식별되어 재촬영이 필요합니다. "
+              "영상 촬영시 5개의 시점(1초간 정지)만 포함해야 합니다. "
+              "손이 흔들리지 않도록 주의하세요. ")
         visualize_cluster(Cs_filtered, labels_filtered, pcd, centroids=None)
         exit()
 
