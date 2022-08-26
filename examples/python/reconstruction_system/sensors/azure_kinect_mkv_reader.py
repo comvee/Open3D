@@ -149,6 +149,7 @@ if __name__ == '__main__':
             os.mkdir(args.output)
             os.mkdir('{}/color'.format(args.output))
             os.mkdir('{}/depth'.format(args.output))
+            os.mkdir('{}/selected'.format(args.output))
         except (PermissionError, FileExistsError):
             print('Unable to mkdir {}, only play mkv'.format(args.output))
             args.output = None
