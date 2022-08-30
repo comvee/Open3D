@@ -165,7 +165,7 @@ def main():
         # meter metric
         points = np.asarray(pcd.points)
         colors = np.asarray(pcd.colors)
-        indices = points[:,2] > -0.6
+        indices = points[:,2] > -0.8
         points_filterd = points[indices]
         colors_filterd = colors[indices]
 
