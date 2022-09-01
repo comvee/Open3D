@@ -204,9 +204,8 @@ def detect_blur_fft(image, size=60, thresh=10):
 
 def main():
     parser = argparse.ArgumentParser(description="Check the constructed point cloud")
-    parser.add_argument("--config",
-                        help="path to the config file, e.g. ./kinetic/data/filename/config.json",
-                        required=True)
+    parser.add_argument("--config", help="path to the config file, e.g. ./kinetic/data/filename/config.json", required=True)
+    parser.add_argument("--view_num", help="number of the viewpoints", type=int, default=5)
     args = parser.parse_args()
 
     base_path = os.path.dirname(args.config)
@@ -217,6 +216,7 @@ def main():
     img_view_dir_path = os.path.join(base_path, "view")
     img_selected_dir_path = os.path.join(base_path, "selected")
     fragments_dir_path = os.path.join(base_path, "fragments")
+    view_num = args.view_num
 
     if not os.path.exists(pcd_path):
         print(f"ERROR: cannout find the point cloud file at {pcd_path}")
@@ -270,7 +270,7 @@ def main():
 
     # Cluster and filter the trajectory
     print("Cluster and filter the trajectory...")
-    labels = cluster_trajectory(Cs, n_clusters=5, n_init=12)
+    labels = cluster_trajectory(Cs, n_clusters=view_num, n_init=12)
     # visualize_cluster(Cs, labels, pcd, centroids=None)
     Cs_filtered, labels_filtered = cluster_filtering(Cs, labels, discard_num=0)
     Cs_filtered_only = []
@@ -295,10 +295,10 @@ def main():
         score, blurry = detect_blur_fft(gray, size=30, thresh=20)
         label2data[label] += [[img_path, score]]
     
-    if len(label2data) != 5:
-        print("Error: 5개 미만 또는 5개 초과의 시점이 식별되어 재촬영이 필요합니다. "
-              "영상 촬영시 5개의 시점(1초간 정지)만 포함해야 합니다. "
-              "손이 흔들리지 않도록 주의하세요. ")
+    if len(label2data) != view_num:
+        print(f"Error: {view_num}개 미만 또는 {view_num}개 초과의 시점이 식별되어 재촬영이 필요합니다. "
+              f"영상 촬영시 {view_num}개의 시점(1초간 정지)만 포함해야 합니다. "
+               "손이 흔들리지 않도록 주의하세요. ")
         visualize_cluster(Cs_filtered, labels_filtered, pcd, centroids=None)
         exit()
 

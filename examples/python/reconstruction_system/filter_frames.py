@@ -5,9 +5,7 @@ from glob import glob
 
 def main():
     parser = argparse.ArgumentParser(description="Filter out the frames")
-    parser.add_argument("--config",
-                        help="path to the config file, e.g. ./kinetic/data/filename/config.json",
-                        required=True)
+    parser.add_argument("--config",help="path to the config file, e.g. ./kinetic/data/filename/config.json",required=True)
     args = parser.parse_args()
 
     base_path = os.path.dirname(args.config)

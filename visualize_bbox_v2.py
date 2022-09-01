@@ -14,6 +14,7 @@ from glob import glob
 def parse_args(argv):
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", help="path to base_path location", type=str)
+    parser.add_argument("--viewer", help="skip (default) / detail", default="skip", type=str)
     args = parser.parse_args(argv)
     return args
 
@@ -145,3 +146,22 @@ if __name__ == "__main__":
         out_path = os.path.join(out_dir_path, imgname)
         cv2.imwrite(out_path, img)
         print(f"{out_path} is saved.")
+        
+        if args.viewer == "detail":
+            axises = o3d.geometry.TriangleMesh.create_coordinate_frame(
+                size=0.05, origin=[0,0,0])
+            app = gui.Application.instance
+            app.initialize()
+            vis = o3d.visualization.O3DVisualizer(f"{imgname}", 1680, 1024)
+            vis.show_settings = True
+            vis.add_geometry("Axises", axises)
+            vis.add_geometry("Points", pcd)
+            for label, bbox in label2bbox.items():
+                obb = bbox.get_oriented_bounding_box()
+                obb.color = (0, 1, 0)
+                vis.add_geometry(f"Bounding box for {label}", obb)
+                for idx in range(0, len(bbox.points)):
+                    vis.add_3d_label(bbox.points[idx], "{}".format(idx))
+            vis.reset_camera_to_default()
+            app.add_window(vis)
+            app.run()

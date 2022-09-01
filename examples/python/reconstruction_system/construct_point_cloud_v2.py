@@ -110,6 +110,7 @@ def main():
     parser = argparse.ArgumentParser(description="Check the constructed point cloud")
     parser.add_argument("--input", help="path to the file directory, e.g. ./kinetic/data/filename", required=True)
     parser.add_argument("--viewer", help="skip (default) / simple / detail", default="skip", type=str)
+    parser.add_argument("--skip_assertion", help="skip the assertions", action="store_true")
     args = parser.parse_args()
 
     base_path = args.input
@@ -123,8 +124,9 @@ def main():
     for rgb_path in rgb_paths:
         filename = os.path.splitext(os.path.basename(rgb_path))[0]
         cnt += "_" == filename[-1]
-    assert len(rgb_paths) == 5, f"Error: {img_selected_dir_path} should include 5 images."
-    assert cnt == 1, f"Error: {img_selected_dir_path} should include one top-view image."
+    if not args.skip_assertion:
+        assert len(rgb_paths) == 5, f"Error: {img_selected_dir_path} should include 5 images."
+        assert cnt == 1, f"Error: {img_selected_dir_path} should include one top-view image."
     
     if os.path.exists(scene_dir_path):
         shutil.rmtree(scene_dir_path)
